@@ -34,7 +34,8 @@ def update_list(list_id: int, db: Session, lists: ListCreate):
         "name": new_list.name, 
         "description": new_list.description,
         "items": new_list.items},
-        synchronize_session='evaluate')
+        synchronize_session="evaluate"
+    )
     
     if updated:
         db.commit()
@@ -42,5 +43,29 @@ def update_list(list_id: int, db: Session, lists: ListCreate):
     return updated, new_list
 
 
-def patch_list(list_id: int, db: Session ):
-    pass
+def patch_list(list_id: int, db: Session, piece_list: dict):
+
+    patched = False
+
+    if piece_list.get("name") and type(piece_list.get("name")) == str:
+        patched = db.query(ListModel).filter(ListModel.id == list_id).update({
+            "name": piece_list.get("name")},
+            synchronize_session="evaluate"
+        )
+
+    elif piece_list.get("description") and type(piece_list.get("description")) == str:
+        patched = db.query(ListModel).filter(ListModel.id == list_id).update({
+            "description": piece_list.get("description")},
+            synchronize_session="evaluate"
+        )
+
+    elif piece_list.get("items") and type(piece_list.get("items")) == dict:
+        patched = db.query(ListModel).filter(ListModel.id == list_id).update({
+            "items": piece_list.get("items")},
+            synchronize_session="evaluate"
+        )
+
+    if patched:
+        db.commit()
+
+    return patched, piece_list

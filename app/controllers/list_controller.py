@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 from config.init_db import SessionLocal, Base, engine
 from .lists_schema import List, ListCreate
-from models.list_sql import create_list, get_lists, get_list, delete_list, update_list
+from models.list_sql import create_list, get_lists, get_list, delete_list, update_list, patch_list
 
 
 Base.metadata.create_all(bind=engine)
-
+#remover ações de banco do controller
 def get_db():
     db = SessionLocal()
     try:
@@ -70,5 +70,11 @@ def update(list_id: int, response: Response, new_list: ListCreate, db: Session =
 
 
 @router.patch("/{list_id}")
-def patch(list_id):
-    pass
+def patch(list_id: int, response: Response, patch_item: dict, db: Session = Depends(get_db)):
+    patched, patched_item = patch_list(list_id=list_id, db=db, piece_list=patch_item)
+
+    if patched:
+        response.status_code = status.HTTP_200_OK
+        return response.status_code, patched_item
+
+    raise HTTPException(status_code=404, detail="List Not Found")
