@@ -1,9 +1,9 @@
 [tool.poetry]
+package-mode = false
 name = "definitive-list"
 version = "0.1.0"
 description = ""
 authors = ["joaoFTH7 <joao.561@live.com>"]
-readme = "README.md"
 packages = [{include = "definitive_list"}]
 
 [tool.poetry.dependencies]

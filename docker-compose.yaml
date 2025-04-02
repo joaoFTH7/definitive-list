@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   db:
     image: postgres
@@ -7,5 +5,41 @@ services:
       - POSTGRES_PASSWORD=rootlist
       - POSTGRES_USER=root
       - POSTGRES_DB=listdb
+      - POSTGRES_PORT=5432
     ports:
-      - 5100:5432
+      - 5432:5432
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo -n '' > /dev/tcp/127.0.0.1/$$POSTGRES_PORT"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+      start_interval: 5s
+    networks:
+      - def-network
+  
+  migrations:
+    build:
+      context: .
+      dockerfile: Migration.Dockerfile
+    networks:
+      - def-network
+    depends_on:
+      db:
+        condition: service_healthy
+  
+  api:
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    networks:
+      - def-network
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+
+networks:
+  def-network:
