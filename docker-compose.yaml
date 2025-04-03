@@ -13,7 +13,7 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
-      start_period: 10s
+      start_period: 5s
       start_interval: 5s
     networks:
       - def-network
@@ -31,6 +31,12 @@ services:
   api:
     build:
       context: .
+    environment:
+      - DB_USERNAME=root
+      - DB_PASSWORD=rootlist
+      - DB_HOSTNAME=db
+      - DB_PORT=5432
+      - DB_DATABASE_NAME=listdb
     ports:
       - 8000:8000
     networks:
