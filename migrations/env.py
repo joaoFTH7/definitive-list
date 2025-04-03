@@ -1,3 +1,4 @@
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -8,6 +9,14 @@ from alembic import context
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+DB_USER = os.getenv("DB_USERNAME", "root")
+DB_PASS = os.getenv("DB_PASSWORD", "rootlist")
+DB_HOSTNAME = os.getenv("DB_HOSTNAME", "db")
+DB_PORT = os.getenv("DB_PORT", 5432)
+DB_DATABASE_NAME = os.getenv("DB_DATABASE_NAME","listdb")
+
+SQLALCHEMY_DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOSTNAME}:{DB_PORT}/{DB_DATABASE_NAME}"
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -38,9 +47,9 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    #url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url,
+        url=SQLALCHEMY_DATABASE_URL,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
