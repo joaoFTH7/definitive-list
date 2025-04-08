@@ -55,3 +55,4 @@ services:
 
 networks:
   def-network:
+    name: defitinive-network
