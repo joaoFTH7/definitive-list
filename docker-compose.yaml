@@ -47,11 +47,24 @@ services:
       - 8000:8000
     networks:
       - def-network
+    volumes:
+      - ${PWD}:/app
+    entrypoint:
+      - uvicorn
+      - --reload
+      - --app-dir
+      - app/
+      - main:app
+      - --host
+      - 0.0.0.0
     depends_on:
       migrations:
         condition: service_completed_successfully
       db:
         condition: service_healthy
+
+volumes:
+  api-volume:
 
 networks:
   def-network:
